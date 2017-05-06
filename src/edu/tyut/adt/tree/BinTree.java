@@ -190,6 +190,15 @@ public class BinTree<E> {
 		postOrderTraversalNode(this.root);
 		System.out.println();
 	}
+	private void postOrderTraversalNode(Node node) {
+		if (node != null) {
+			postOrderTraversalNode(node.left);
+			postOrderTraversalNode(node.right);
+			if (node.e != null) {
+				System.out.print(node.e);
+			}
+		}
+	}
 	/**
 	 * 后序遍历---非递归实现
 	 */
@@ -204,7 +213,7 @@ public class BinTree<E> {
 			}
 			// 取出当前结点
 			node = stack.peek();
-			if (node.right == null || node.right == pre) {// 没有右结点或右结点已经出栈时，访问当前结点
+			if (node.right == null || node.right.equals(pre)) {// 没有右结点或右结点已经出栈时，访问当前结点
 				if (node.e != null)
 					System.out.print(node.e);
 				stack.pop();	
@@ -234,15 +243,6 @@ public class BinTree<E> {
 				queue.add(node.left); // 添加左结点
 			if (node.right != null)
 				queue.add(node.right); // 添加右结点
-		}
-	}
-	private void postOrderTraversalNode(Node node) {
-		if (node != null) {
-			postOrderTraversalNode(node.left);
-			postOrderTraversalNode(node.right);
-			if (node.e != null) {
-				System.out.print(node.e);
-			}
 		}
 	}
 	
