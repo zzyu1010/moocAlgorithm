@@ -1,20 +1,16 @@
 package edu.tyut.adt.tree;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @title BSTree.java
  * @description 二叉搜索树 :
- * <li>非空左子树的所有键值小于其根结点的键值</li>
- * <li>非空右子树的所有键值大于其根节点的键值</li>
- * <li>左、右子树都是二叉搜索树</li>
+ *              <li>非空左子树的所有键值小于其根结点的键值</li>
+ *              <li>非空右子树的所有键值大于其根节点的键值</li>
+ *              <li>左、右子树都是二叉搜索树</li>
  * @time 2017年5月5日下午9:02:09
  * @author
- * 		   <li>ZZY</li>
+ * 		<li>ZZY</li>
  *         <li>E-mail: zzyu1010@163.com</li>
  * @version 0.0.1
  */
@@ -203,11 +199,14 @@ public class BSTree<E extends Comparable<E>> {
 			return getMaxNode(node.right);
 		}
 	}
-	
+
 	/**
 	 * 删除删除二叉搜索树e结点，非递归实现
+	 * 
 	 * @param e
 	 */
+
+	@SuppressWarnings("unchecked")
 	public void delete(E e) {
 		if (isEmpty() || e == null) {
 			return;
@@ -216,26 +215,20 @@ public class BSTree<E extends Comparable<E>> {
 		Node parent = null;
 		Node node = null;
 		boolean flag = true; // 默认左子树
-		Map<Node, Boolean> map = null;
-		Set<Node> set = null;
-		Iterator<Node> iter;
+
 		if (e.compareTo(root.data) == 0) { // 处理根结点的情况
 			deleteRoot();
-			return ;
+			return;
 		} else {
-			map = getParent(e); // 获取其父结点
-			set = map.keySet();
-			iter = set.iterator();
-			while (iter.hasNext()) {
-				parent = iter.next();
-				flag = map.get(parent);
-			}
-			if (parent == null) {
+			Object[] obj = getParent(e); // 获取其父结点
+			if (obj[0] == null) {
 				return;
 			}
+			parent = (Node) obj[0];
+			flag = (Boolean) obj[1];
 			node = flag ? parent.left : parent.right; // 取出当前要删除的结点
 		}
-		 
+
 		if (node.left != null && node.right != null) { // 当前结点存在左右孩子结点
 			deleteDoubleNode(node);
 		} else if (node.left != null) { // 当前结点存在左孩子结点
@@ -247,46 +240,45 @@ public class BSTree<E extends Comparable<E>> {
 		}
 		node = null;
 	}
-	
+
 	/**
 	 * 处理根结点的情况
 	 */
 	private void deleteRoot() {
-			Node node = root; // 当前要删除的结点为根结点
-			if (node.left != null && node.right == null) { //根结点只有左子树
-				root = node.left;
-				return ;
-			} else if (node.right != null && node.left == null) { // 根结点只有右子树
-				root = node.right;
-				return ;
-			} else if (node.left == null && node.right == null) { // 根结点没有左右孩子
-				root = null;
-			} else { // 根结点具有左右孩子
-				deleteDoubleNode(root);
-			}
+		Node node = root; // 当前要删除的结点为根结点
+		if (node.left != null && node.right == null) { // 根结点只有左子树
+			root = node.left;
+			return;
+		} else if (node.right != null && node.left == null) { // 根结点只有右子树
+			root = node.right;
+			return;
+		} else if (node.left == null && node.right == null) { // 根结点没有左右孩子
+			root = null;
+		} else { // 根结点具有左右孩子
+			deleteDoubleNode(root);
+		}
 	}
+
 	/**
 	 * 要删除的结点具有左右孩子
-	 * @param parent 当前结点的父结点
-	 * @param node 要删除的当前结点
+	 * 
+	 * @param parent
+	 *            当前结点的父结点
+	 * @param node
+	 *            要删除的当前结点
 	 */
 	private void deleteDoubleNode(Node node) {
 		/**
-		 *要删除结点的位置可以由其左子树的最大结点或其右子树的最小结点代替
+		 * 要删除结点的位置可以由其左子树的最大结点或其右子树的最小结点代替
 		 */
 		if (node.left != null && node.right != null) { // 当前结点存在左右孩子结点
 			Node maxNode = getMaxNode(node.left); // 找到以node为根节点的左子树，取出其左子树最大值
 			// 找到最大值结点的父结点，然后删除最大值结点
-			Map<Node,Boolean>map = getParent(maxNode.data);
-			Set<Node> set = map.keySet();
-			Iterator<Node> iter = set.iterator();
-			boolean flag = true;
-			Node parent = null;
-			while (iter.hasNext()) {
-				parent = iter.next();
-				flag = map.get(parent);
-			}
-			 // 将最大值赋予要删除的结点数据
+			Object[] obj = getParent(maxNode.data);
+			boolean flag = (Boolean) obj[1];
+			@SuppressWarnings("unchecked")
+			Node parent = (Node) obj[0];
+			// 将最大值赋予要删除的结点数据
 			node.data = maxNode.data;
 			// 最大值结点最多只有一个左孩子或没有孩子结点
 			if (maxNode.left != null) { // 只有左孩子
@@ -296,6 +288,7 @@ public class BSTree<E extends Comparable<E>> {
 			}
 		}
 	}
+
 	/**
 	 * 实现删除没有孩子结点或只有一个孩子结点
 	 * 
@@ -314,18 +307,54 @@ public class BSTree<E extends Comparable<E>> {
 		}
 	}
 
+	public void deleteRecursive(E e) {
+		if (contains(e)) {
+			deleteNode(e, root);
+		}
+	}
+
 	/**
-	 * 找到给定数值结点的父节点，以及其所在父节点左右方向，以map集合返回，node表示其父结点，flag为true 表示其是左孩子。
+	 * 递归实现结点删除
+	 * @param node
+	 * @return
+	 */
+	private Node deleteNode(E e, Node node) {
+		 
+		if (e.compareTo(node.data) < 0) { // 左子树递归删除
+			// node.left 要删除结点的父结点
+			node.left = deleteNode(e,node.left);
+		} else if (e.compareTo(node.data) > 0) { // 右子树递归删除
+			// node.right 要删除结点的父结点
+			node.right = deleteNode(e,node.right);
+		} else { // 找到要删除的结点
+			if (node.left != null && node.right != null) { // 左、右子树都存在
+				Node maxNode = getMaxNode(node.left); // 在左子树中找最大的元素填充删除结点
+				node.data = maxNode.data;
+				node.left = deleteNode(maxNode.data, node.left); // 在删除结点的左子树中删除最大结点
+			} else  {
+				if (node.left == null) { // 有右子树存在或无子结点
+					node = node.right;
+				} else if (node.right == null) { // 有左子树存在或无子结点
+					node = node.left;
+				}
+			}
+		}
+	return node;
+}
+
+
+	/**
+	 * 找到给定数值结点的父节点，以及其所在父节点左右方向，以对象数组返回，node表示其父结点，flag为true 表示其是左孩子。
 	 * 本函数不能处理二叉搜索树的根节点
 	 * 
 	 * @param e
-	 * @return
+	 * @return Object[] obj[0]保存node，obj[1]保存flag
 	 */
-	private Map<Node, Boolean> getParent(E e) {
+	private Object[] getParent(E e) {
 		if (e == null) {
 			return null;
 		}
-		Map<Node, Boolean> map = new HashMap<>();
+		Object[] obj = new Object[2];
 		boolean flag = false; // flag = false,表示要删除的结点是parent结点的右孩子
 		Node node = root;
 		Node parent = node;
@@ -339,13 +368,22 @@ public class BSTree<E extends Comparable<E>> {
 				parent = node;
 				node = node.right;
 			} else if (e.compareTo(node.data) == 0) { // 找到结点
-				map.put(parent, flag);
+				obj[0] = parent;
+				obj[1] = flag;
 				break;
 			}
 		}
-		return map;
+		return obj;
 	}
 
+	public boolean contains(E e) {
+		Object[] obj = getParent(e);
+		return obj[0] == null ? false : true;
+	}
+
+	/**
+	 * 后序遍历
+	 */
 	public void postOrderTraverl() {
 		Node node = root;
 		ArrayDeque<Node> stack = new ArrayDeque<>();
