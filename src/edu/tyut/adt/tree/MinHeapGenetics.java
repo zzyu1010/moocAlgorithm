@@ -12,20 +12,18 @@ import java.util.Arrays;
  * @version 0.0.1
  */
 public class MinHeapGenetics<T extends Comparable<T>> {
-	private T[] elements;
+	private Object[] elements;
 	private int size;
 	private int capacity;
 	private static final int DEFAULT_CAPACITY = 12;
 
-	@SuppressWarnings("unchecked")
 	public MinHeapGenetics() {
-		elements = (T[])new Object[DEFAULT_CAPACITY];
+		elements = new Object[DEFAULT_CAPACITY];
 		capacity = DEFAULT_CAPACITY;
 	}
 
-	@SuppressWarnings("unchecked")
 	public MinHeapGenetics(int capacity) {
-		elements = (T[])new Object[capacity];
+		elements = new Object[capacity];
 		this.capacity = capacity;
 	}
 
@@ -49,14 +47,14 @@ public class MinHeapGenetics<T extends Comparable<T>> {
 		int parent = -1, child = -1;
 		T temp = null;
 		for (int i = size / 2 - 1; i >= 0; i--) { // 从最后一个叶子结点的父结点下标开始
-			temp = elements[i];
+			temp = cast(elements[i]);
 			for (parent = i; parent * 2 + 1 < size; parent = child) { // 有子结点
 				child = 2 * parent + 1; // 左孩子结点
 
-				if (child != size - 1 && elements[child].compareTo(elements[child + 1]) > 0) { // 有右孩子，且右孩子比左孩子小
+				if (child != size - 1 && cast(elements[child]).compareTo(cast(elements[child + 1])) > 0) { // 有右孩子，且右孩子比左孩子小
 					child++; // 取出左右孩子中较小的一个
 				}
-				if (temp.compareTo(elements[child]) < 0) // 父结点比孩子结点小，不做调整
+				if (temp.compareTo(cast(elements[child])) < 0) // 父结点比孩子结点小，不做调整
 					break;
 				else
 					elements[parent] = elements[child]; // 交换父结点与孩子结点位置
@@ -74,7 +72,7 @@ public class MinHeapGenetics<T extends Comparable<T>> {
 		}
 		// 调整最小堆,向下过滤结点
 		int i = size++;
-		for (; elements[(i - 1) / 2].compareTo(item) > 0 && i > 0; i = (i - 1) / 2) { // 要插入的结点与其父结点相比较
+		for (; cast(elements[(i - 1) / 2]).compareTo(item) > 0 && i > 0; i = (i - 1) / 2) { // 要插入的结点与其父结点相比较
 			elements[i] = elements[(i - 1) / 2];
 		}
 		elements[i] = item;
@@ -92,15 +90,15 @@ public class MinHeapGenetics<T extends Comparable<T>> {
 		int parent = -1;
 		int child = -1;
 
-		T minItem = elements[0]; // 取出根节点最小值
+		T minItem = cast(elements[0]); // 取出根节点最小值
 		// 用最小堆中最后一个元素从根节点开始向上过滤下层结点
-		T temp = elements[--size];
+		T temp = cast(elements[--size]);
 		for (parent = 0; 2 * parent + 1 <= size; parent = child) {
 			child = parent * 2 + 1;
-			if (child != size && elements[child].compareTo(elements[child + 1]) > 0) {
+			if (child != size && cast(elements[child]).compareTo(cast(elements[child + 1])) > 0) {
 				child++;// child指向左右孩子结点较小者
 			}
-			if (temp.compareTo(elements[child]) < 0) {
+			if (temp.compareTo(cast(elements[child])) < 0) {
 				break;
 			} else { // 移动temp元素到下一层
 				elements[parent] = elements[child];
@@ -110,7 +108,11 @@ public class MinHeapGenetics<T extends Comparable<T>> {
 		return minItem;
 	}
 
-	public T[] toArray() {
+	@SuppressWarnings("unchecked")
+	private T cast(Object obj) {
+		return (T)obj;
+	}
+	public Object[] toArray() {
 		return Arrays.copyOf(elements, size);
 	}
 
